@@ -10,7 +10,9 @@ To detect the road ahead and steer the miniature vechile accordingly.
 The application is developed for the [Kiwi platform](https://github.com/chalmers-revere/opendlv-tutorial-kiwi) and runs as a seperate microservice. It uses [libcluon](https://github.com/chrberger/libcluon) to connect to a shared memory where image data is received. It  performs object detection using [OpenCV](https://opencv.org/), discovering centre points of blue and yellow cones ahead. It then relies on trignnometric functions to compute an angle of the road that is translated into a matching steering request for the Kiwi car.
 
 ## Software Design
-The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Color Processing, Noise Reduction, Contour Finding and View Changes.
+The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Color Processing, Noise Reduction, Contour Finding and View Changes as well as calculations for the car.
+
+<img src="SoftwareArchitecture.png" width="500">
 
 ## Technologies used for development
 - [Linux](https://ubuntu.com/blog/tag/ubuntu-18-04)
