@@ -1,5 +1,7 @@
 # DIT638 Cyber Physical Systems & Systems of Systems
 
+<img src="mass_centre_points.gif" width="700"><br>
+
 ## What?
 A microservice performing image recognition for a self driving vehicle.
 
@@ -8,6 +10,9 @@ To detect the road ahead and steer the miniature vehicle accordingly.
 
 ## How?
 The application is developed for the [Kiwi platform](https://github.com/chalmers-revere/opendlv-tutorial-kiwi) and runs as a separate  microservice. It uses [libcluon](https://github.com/chrberger/libcluon) to connect to a shared memory where image data from the car is received. It performs object detection using [OpenCV](https://opencv.org/), discovering centre points of blue and yellow cones ahead and computes matching steering requests for the Kiwi car.
+
+<img src="color_processing.gif" width="500"><br>
+*Detecting cones using Color Processing and Noise Reduction*
 
 ## Software Design
 The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Color Processing, Noise Reduction, Contour Finding and View Changes as well as calculations for the steering angle of the car.
