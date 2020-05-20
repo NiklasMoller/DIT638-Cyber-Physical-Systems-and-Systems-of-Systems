@@ -1,6 +1,7 @@
 # DIT638 Cyber Physical Systems & Systems of Systems
 
 <img src="mass_centre_points.gif" width="700"><br>
+*Detecting centre points of cones*
 
 ## What?
 A microservice performing image recognition for a self driving vehicle.
