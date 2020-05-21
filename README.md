@@ -15,7 +15,7 @@ The application is developed for the [Kiwi platform](https://github.com/chalmers
 *Detecting cones using Color Processing and Noise Reduction*
 
 ## Software Design
-The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Color Processing, Noise Reduction, Contour Finding and View Changes as well as calculations for the steering angle of the car.
+The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Colour Processing, Noise Reduction, Contour Finding and View Changes as well as calculations for the steering angle of the car.
 
 <img src="SoftwareArchitecture.png" width="500">
 
