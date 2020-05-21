@@ -17,7 +17,7 @@ The application is developed for the [Kiwi platform](https://github.com/chalmers
 ## Software Design
 The application decomposes the task of image recognition using [Pipe and Filters](https://docs.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters). The filters perform Colour Processing, Noise Reduction, Contour Finding and View Changes as well as calculations for the steering angle of the car.
 
-<img src="SoftwareArchitecture.png" width="500">
+<img src="./assets/images/SoftwareArchitecture.png" width="500">
 
 ## Technologies used for development
 - [Linux](https://ubuntu.com/blog/tag/ubuntu-18-04)
