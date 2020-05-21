@@ -1,0 +1,80 @@
+# Copyright (C) 2020  Christian Berger
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Which Docker image shall be used on the GitLab runner?
+image: docker:19.03.3
+
+# Details about how to connect to the Docker service to run this build.
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  CI_BUILDX_ARCHS: "linux/amd64,linux/arm64,linux/arm/v7"
+  BUILDX_URL: https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-amd64
+
+services:
+  - name: docker:19.03.3-dind
+
+stages:
+  - build
+  - deploy
+
+# Display information before we start the build.
+before_script:
+  - docker image prune -f
+  - docker info
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+# This section describes what shall be done to build and test the project.
+build-and-test:
+  only: 
+    - branches
+  tags:
+    - docker-build
+  stage: build
+  script:
+    - docker build -t name:latest -f Dockerfile .
+    - mkdir cid
+    - docker create --cidfile "cid/container_id.cid" name:latest
+    - docker cp `cat cid/container_id.cid`:usr/bin/code_coverage.pdf .
+    - docker rm `cat cid/container_id.cid`
+  artifacts:
+    when: always
+    paths: 
+      - code_coverage.pdf
+    expire_in: 10 days
+
+# This section describes what shall be done to deploy artefacts from the project.
+release:
+  before_script:
+    - mkdir -p ~/.docker/cli-plugins
+    - wget -O ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
+    - chmod 755 ~/.docker/cli-plugins/docker-buildx
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --name platformbuilder --use
+    - DOCKER_CLI_EXPERIMENTAL=enabled docker buildx inspect --bootstrap
+    - DOCKER_CLI_EXPERIMENTAL=enabled docker buildx ls df -h
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+  only:
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_TAG =~ /^v\d+.\d+.\d+$/
+  tags:
+    - docker-build
+  stage: deploy
+  script:
+    #- docker build -f Dockerfile -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
+    - DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform $CI_BUILDX_ARCHS -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" --push .

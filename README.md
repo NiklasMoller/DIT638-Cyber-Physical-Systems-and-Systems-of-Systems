@@ -1,6 +1,6 @@
 # DIT638 Cyber Physical Systems & Systems of Systems
 
-<img src="mass_centre_points.gif" width="700"><br>
+<img src="./assets/images/mass_centre_points.gif" width="700"><br>
 
 ## What?
 A microservice performing image recognition for a self driving vehicle.
@@ -11,7 +11,7 @@ To detect the road ahead and steer the miniature vehicle accordingly.
 ## How?
 The application is developed for the [Kiwi platform](https://github.com/chalmers-revere/opendlv-tutorial-kiwi) and runs as a separate  microservice. It uses [libcluon](https://github.com/chrberger/libcluon) to connect to a shared memory where image data from the car is received. It performs object detection using [OpenCV](https://opencv.org/), discovering centre points of blue and yellow cones ahead and computes matching steering requests for the Kiwi car.
 
-<img src="color_processing.gif" width="500"><br>
+<img src="./assets/images/color_processing.gif" width="500"><br>
 *Detecting cones using Color Processing and Noise Reduction*
 
 ## Software Design
@@ -43,7 +43,7 @@ The application decomposes the task of image recognition using [Pipe and Filters
 
 
 ## Build the application
-The project is best managed on a Linux machine with Ubuntu 18.04. 
+The project is best managed on a Linux machine with Ubuntu 18.04.
 It uses g++, CMake, Git and Docker
 
 For installation, run these commands in your terminal to make sure your system is up to date:
@@ -69,3 +69,4 @@ The application can be started using a bash script from the root folder:
 
 > bash project-starter
 
+This will pull [opendlv-video-h264-decoder](https://github.com/chalmers-revere/opendlv-video-h264-decoder) and [opendlv-vehicle-view](https://github.com/chalmers-revere/opendlv-vehicle-view) which enables playing of [recording files](https://github.com/chalmers-revere).

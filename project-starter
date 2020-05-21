@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+###############################################################
+# STARTER SCRIPT
+# Builds required docker images for project and starts seperate terminals for the images
+# Also opens browser to open-dlv.
+################################################################
+
+echo "RUNNER: Starting project terminals."
+
+# get argument
+INPUT=$1
+ 
+# check if production mode
+if [ "$INPUT" != "dev" ]; then
+    
+    # clear dangling images
+    docker system prune -f 
+fi
+
+# start open dlv
+gnome-terminal -- bash -c "bash runners/open-dlv-runner $INPUT; exec bash"
+
+# start the terminal for decoder
+gnome-terminal -- bash -c "bash runners/decoder-runner $INPUT; exec bash"
+
+# start the terminal for the microservice
+gnome-terminal -- bash -c "bash runners/application-runner $INPUT; exec bash"
+
+# Open google-chrome and handle multiple threads problem, don't display message
+echo "RUNNER: Opening browser to Open-DLV."
+google-chrome http://localhost:8081/ --disable-gpu --disable-software-rasterizer &>/dev/null &
+
+# close this terminal
+echo "RUNNER: Closing terminal."
+
+exit 0

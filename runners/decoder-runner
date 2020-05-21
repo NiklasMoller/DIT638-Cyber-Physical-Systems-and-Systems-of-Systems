@@ -1,0 +1,36 @@
+#!/bin/sh
+
+###############################################################
+# DECODER RUNNER
+# Starts the H264decoder in the opened terminal
+################################################################
+
+# Set name of terminal
+PS1=$
+PROMPT_COMMAND=
+echo -en "\033]0;DECODER TERMINAL\a"
+
+# get arguments
+INPUT=$1
+
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+
+    # if production mode
+    echo "RUNNER: Building image."
+    docker build https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.3 -f Dockerfile.amd64 -t h264decoder:v0.0.3
+fi
+
+echo "RUNNER: Disabling access control."
+xhost +
+
+echo "RUNNER: Starting Decoder."
+docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp h264decoder:v0.0.3 --cid=253 --name=img
+
+# Check if succesfully started decoder
+if [ $? -eq 1 ]
+    then
+        echo "RUNNER: Error while starting decoder. Terminal will stop." && exit 1 
+    else 
+        echo "RUNNER: Decoder ran succesfully." && exit 0
+fi

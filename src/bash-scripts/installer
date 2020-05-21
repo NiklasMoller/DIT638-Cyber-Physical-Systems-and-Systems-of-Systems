@@ -1,0 +1,31 @@
+#!/bin/bash
+
+###############################################################
+# INSTALL SCRIPT
+# 
+################################################################
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" == "dev" ]; then
+    # if dev mode
+    apt-get install -y \
+    cmake \
+    build-essential \
+    libopencv-dev
+else
+    # if production mode
+    apt-get install -y \
+    cmake \
+    flawfinder \
+    clang-tools \
+    build-essential \
+    libopencv-dev \
+    lcov \
+    pmccabe \
+    ghostscript \
+    wkhtmltopdf \
+    xvfb
+fi

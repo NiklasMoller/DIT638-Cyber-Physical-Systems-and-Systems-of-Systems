@@ -1,0 +1,48 @@
+#!/bin/sh
+
+###############################################################
+# SUBMISSION APPLICATION RUNNER
+# Starts the microservice application
+################################################################
+
+# set name of terminal
+PS1=$
+PROMPT_COMMAND=
+echo -en "\033]0;APPLICATION TERMINAL\a"
+
+# check display input
+str1=$1
+str2="d"
+
+if [ "$str1" == "$str2" ]; then
+    DISPLAY="'-e DISPLAY=$DISPLAY'"
+    echo $DISPLAY
+else
+    DISPLAY=""
+    echo $DISPLAY
+fi
+
+# check verbose input
+str3=$2
+str4="v"
+
+if [ "$str3" == "$str4" ]; then
+    VERBOSE="--verbose"
+    echo $VERBOSE
+else
+    VERBOSE=""
+    echo $VERBOSE
+fi
+
+echo "RUNNER: Building application."
+docker build -f Dockerfile -t my-opencv-example .
+
+echo "RUNNER: Please start the video feed before executing the application."
+echo "RUNNER: Press any key to start the application."
+
+# wait for input from user
+read var1
+
+# start application
+echo "RUNNER: Starting application"
+docker run --rm -ti --net=host --ipc=host $DISPLAY -v ~/Desktop/data:/usr/bin/data -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 $VERBOSE

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+###############################################################
+# PMCCABE SCRIPT
+# https://people.debian.org/~bame/pmccabe/overview.html
+# https://zoomadmin.com/HowToInstall/UbuntuPackage/pmccabe
+################################################################
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+
+    # Set a limit for complexity
+    LIMIT=$"10"
+
+    # Run pmccabe on all input files ($@ = means all passed arguments)
+    pmccabe ${@:2} >> pmccabe_result.txt
+
+    # Store only the modified mccabe values from the check in another txt file
+    cut -c-1 pmccabe_result.txt >> result_partition.txt
+
+    # Get the highest modified mccabe values from the stored values
+    MAX=$(grep -E0 '[0-9]+' result_partition.txt | sort -rn | head -n 1)
+
+    # Remove .txt files
+    rm pmccabe_result.txt result_partition.txt
+
+    # Check if complexity of code if higher than limit
+    # Return 0 if no complexity, return 1 if complexity
+    if [ $MAX -gt $LIMIT ]
+        then
+            echo "pmccabe: complexity issues found. build will fail." && exit 1 
+        else 
+            echo "pmccabe: no complexity issues found." && exit 0
+    fi
+fi
+
+
+

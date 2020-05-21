@@ -1,0 +1,74 @@
+#!/bin/sh
+
+###############################################################
+# APPLICATION RUNNER
+# Starts the microservice application
+################################################################
+
+# set name of terminal
+PS1=$
+PROMPT_COMMAND=
+echo -en "\033]0;APPLICATION TERMINAL\a"
+
+# get arguments
+INPUT=$1
+
+echo "RUNNER: Building application."
+docker build -f Dockerfile -t my-opencv-example . --build-arg arg=$INPUT
+
+# check build was succesful
+if [ $? -eq 0 ]; then
+
+    # remove existing csv files from application
+    rm -f src/python/*group_10*
+
+    # set variable for python folder
+    PYTHON_FOLDER=$PWD/src/python
+
+    # initalize iteration variable
+    ITERATION=1
+
+    # loop application 
+    while [ $ITERATION -le 5 ]
+    do
+
+        echo "RUNNER: Run #$ITERATION"
+        echo "RUNNER: Please start the video feed before executing the application."
+        echo "RUNNER: Press any key to start the application."
+
+        # wait for input from user
+        read var1
+
+        # start application
+        echo "RUNNER: Starting application"
+
+        # the three run options
+
+        # using both display and verbose
+        docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v ~/Desktop/data:/usr/bin/data -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 --verbose --iteration=$ITERATION
+
+        # using only display
+        #docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v ~/Desktop/data:/usr/bin/data -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 --iteration=$ITERATION
+        
+        # omitting both display and verbose
+        #docker run --rm -ti --net=host --ipc=host -v ~/Desktop/data:/usr/bin/data -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 --iteration=$ITERATION
+
+        # get name of current file
+        CURRENT_CSV="group10_$ITERATION.csv"
+
+        # move csv file from the data folder to python folder
+        sudo mv ~/Desktop/data/$CURRENT_CSV $PYTHON_FOLDER
+
+        # run python script with input for file name
+        python3 $PYTHON_FOLDER/GroundSteeringAngle.py $ITERATION
+
+        # increment iteration
+        ((ITERATION++))
+        # end of loop here 
+    done
+
+    echo "RUNNER: Docker run succesful after runs. Application windows will be terminated." && exit 0
+fi
+
+echo "RUNNER: Build fail. Will terminate execution of application." && exit 1
+

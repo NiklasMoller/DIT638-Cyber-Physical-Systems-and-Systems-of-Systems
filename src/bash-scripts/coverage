@@ -1,0 +1,55 @@
+#!/bin/bash
+
+###############################################################
+# COVERAGE-SCRIPT
+# https://en.wikipedia.org/wiki/Gcov
+# https://medium.com/@naveen.maltesh/generating-code-coverage-report-using-gnu-gcov-lcov-ee54a4de3f11
+# https://linux.die.net/man/1/lcov
+################################################################
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+
+    # if production mode
+    cd build/CMakeFiles
+    ALL_GCNO_FILES=$( find . -type f -name '*.cpp.gcno')
+    gcov $ALL_GCNO_FILES
+
+    # create baseline coverage (zero coverage)
+    lcov -c -i -d . -o base_coverage.info
+
+    # remove unwanted files
+    lcov --remove base_coverage.info '/usr/*' '*.hpp' --output-file base_coverage.info
+
+    # create actual coverage based on test (file will not be generated if no tests has been run)
+    lcov -c -d . -o test_coverage.info
+
+    # check if test_coverage is valid (size = 0byte when unvalid)
+    SIZE=$(du -sb test_coverage.info | awk '{ print $1 }')
+
+    # check if test_coverage is valid
+    if [ $SIZE -ne 0 ]
+    then
+        # remove unwanted files
+        lcov --remove test_coverage.info '/usr/*' '*.hpp' --output-file test_coverage.info   
+
+        # combine baseline and test coverage data
+        lcov -a base_coverage.info -a test_coverage.info -o coverage.info
+    else
+        # use only baseline as coverage data 
+        mv base_coverage.info coverage.info
+    fi
+
+    # display coverage (this is where code coverage for gitlab is provided)
+    lcov -l coverage.info
+
+    # generate html files
+    genhtml coverage.info --output-directory coverage
+fi
+
+
+
+

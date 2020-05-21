@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Hat off to: https://kaskavalci.com/using-git-hooks-to-format-your-code/
+
+export PATH=`git rev-parse --git-dir`/../tools/:$PATH
+
+git clang-format-6.0 --extensions cpp --style file -v
+# Possible predefined styles:
+# LLVM
+# Google
+# Chromium
+# Mozilla
+# WebKit
+
+# Change the code with:
+# git clang-format --extensions cpp,hpp -style=llvm -v
+
+if [[ $? -eq 1 ]]
+then
+ echo "Exit commit"
+ exit 1
+fi
+
+rc=$?
+if [[ $rc == 33 ]]
+then
+ echo "Nothing needs to be reformatted!"
+ exit 0
+fi
+
+echo -e "Would you like to continue to commit (y/n): \c"
+
+# Make sure under any mode, we can read user input.
+exec < /dev/tty
+read cont
+
+if [ "$cont" == "y" ]
+then
+ exit 0
+fi
+
+exit 1

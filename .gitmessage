@@ -1,0 +1,32 @@
+######################################################
+################## COMMIT CONTENT ####################
+######################################################
+# Subject (below)
+
+# Description (below)
+- 
+# Closes issues
+
+# Co-authors
+
+######################################################
+################## COMMIT NOTES ######################
+######################################################
+# [Verb] [content]
+# Use present tense, no dots
+# 
+# Description notes:
+# Use bullet points (max 5), short description
+# 
+# Close notes:
+# Closes #4 (see gitlab board for issue ids),  
+# comma seperated when closing multiple issues
+# 
+# Co-author notes:
+# Just insert one the following lines (exclude #)
+# Co-authored-by: Emanuel Dellsén <dellsen@student.chalmers.se>
+# Co-authored-by: Karl Westgårdh <karl.westgardh@gmail.com>
+# Co-authored-by: Susan Lieu <lieu@student.chalmers.se>
+# Co-authored-by: Niklas Möller <mollern@student.chalmers.se>
+
+######################################################

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+###############################################################
+# BUILD-AND-TEST SCRIPT
+# Only used for seperation of concerns
+################################################################
+
+mkdir build && \
+cd build && \
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
+make && make install 
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+    # if production mode
+
+    # copy test_image into tests binary folder
+    cp ../src/tests/test_image.png CMakeFiles/steering-decider-runner.dir/src/tests #real
+
+    make CTEST_OUTPUT_ON_FAILURE=1 test
+    #make test
+fi
+
+

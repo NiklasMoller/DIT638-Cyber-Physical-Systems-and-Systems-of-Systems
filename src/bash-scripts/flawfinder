@@ -1,0 +1,33 @@
+#!/bin/bash
+
+###############################################################
+# FLAWFINDER SCRIPT
+# https://dwheeler.com/flawfinder/
+# https://zoomadmin.com/HowToInstall/UbuntuPackage/flawfinder
+################################################################
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+
+    # run flawfinder on files in src and subdirectories on extension .cpp
+    flawfinder -m 0 ${@:2} >> flawfinder_result.txt
+
+    # localize variable of return value to check if hits are found
+    grep -q 'Hits = ' flawfinder_result.txt
+    HITS_FOUND=$?
+
+    # remove flawfinder_result
+    rm flawfinder_result.txt
+
+    # check if flawfinder_result contains hits
+    if [ $HITS_FOUND -eq 0 ]
+        then
+            echo "flawfinder: hits found. build will fail." && exit 1 
+        else 
+            echo "flawfinder: no hits found." && exit 0
+    fi
+fi
+

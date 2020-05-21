@@ -1,0 +1,51 @@
+#!/bin/bash
+
+###############################################################
+# PDF-CREATOR SCRIPT
+# https://wkhtmltopdf.org/
+# http://manpages.ubuntu.com/manpages/trusty/man1/gs.1.html
+# https://unix.stackexchange.com/questions/192642/wkhtmltopdf-qxcbconnection-could-not-connect-to-display
+################################################################
+
+# get argument
+INPUT=$1
+ 
+# check if dev mode
+if [ "$INPUT" != "dev" ]; then
+
+    # create local variable for naming of the pdfs
+    i=0
+    
+    # get all html files
+    ALL_HTML_FILES=$( find ./build/CMakeFiles/coverage/src -type f -name '*.html')
+
+    # loop over the html files and print as pdfs
+    for file in $ALL_HTML_FILES
+    do
+        # print html to pdf
+        xvfb-run -a wkhtmltopdf $file $i.pdf
+        let "i+=1" 
+    done
+
+    # get all html files
+    ALL_PDF_FILES=$( find . -type f -name '*.pdf')
+
+    # merge pdfs into a single coverage report
+    gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=code_coverage.pdf $ALL_PDF_FILES
+
+    # find all pdfs except coverage report
+    PDFS_TO_BE_REMOVED=$( find . -type f -name '*.pdf' ! -name 'code_coverage.pdf' )
+    
+    # remove all pdfs and html files except coverage report
+    rm $PDFS_TO_BE_REMOVED
+    rm $ALL_HTML_FILES
+
+    # move coverage report
+    mv code_coverage.pdf ./build/CMakeFiles/coverage/
+
+    # copy coverage folder to artifact 
+    cp -r ./build/CMakeFiles/coverage/ /tmp/
+fi
+
+
+

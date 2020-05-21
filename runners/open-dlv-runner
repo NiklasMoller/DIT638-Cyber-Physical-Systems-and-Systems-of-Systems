@@ -1,0 +1,16 @@
+#!/bin/sh
+
+###############################################################
+# OPEN-DLV-RUNNER
+# Starts the OPEN-DLV application. 
+################################################################
+
+# set name of terminal
+PS1=$
+PROMPT_COMMAND=
+echo -en "\033]0;OPEN-DLV TERMINAL\a"
+
+echo "RUNNER: Starting Open-DLV."
+docker run --rm --init --net=host --name=opendlv-vehicle-view -v $PWD:/opt/vehicle-view/recordings -v /var/run/docker.sock:/var/run/docker.sock -p 8081:8081 chalmersrevere/opendlv-vehicle-view-multi:v0.0.60
+
+exit 0
